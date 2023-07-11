@@ -1,0 +1,25 @@
+spring:
+  profiles:
+    group:
+      "local" : "local, jwt, oauth"
+    active : local # "local" 을 행
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "local" # local이 active 됐을 때 해당 설정을 수행
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/OauthStudy?serverTimezone=Asia/Seoul
+    username: root
+    password: 1234
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
