@@ -18,13 +18,10 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public void signUp(UserSignUpDto userSignUpDto) throws Exception{
-        if (userRepository.findByEmail(userSignUpDto.getEmail()).isPresent()) {
-            throw new Exception("이미 존재하는 이메일입니다");
-        }
-
-        if (userRepository.findByNickName(userSignUpDto.getNickName()).isPresent()) {
-            throw new Exception("이미 존재하는 닉네임입니다");
+    public boolean signUp(UserSignUpDto userSignUpDto){
+        if (userRepository.existsByEmail(userSignUpDto.getEmail())
+                || userRepository.existsByNickName(userSignUpDto.getNickName())) {
+            return false;
         }
 
         User user = User.builder()
@@ -38,5 +35,9 @@ public class UserService {
 
         user.passwordEncode(passwordEncoder);
         userRepository.save(user);
+
+        return true;
     }
+
+
 }

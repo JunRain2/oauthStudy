@@ -1,5 +1,6 @@
 package com.example.oauthstudy.user.domain.entity;
 
+import com.example.oauthstudy.global.BaseTimeEntity;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -9,10 +10,8 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Table(name = "USERS")
-@NoArgsConstructor()
-@AllArgsConstructor
-@Builder
-public class User {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class User extends BaseTimeEntity {
 
     @Id
     @Column(name="USER_ID")
@@ -45,5 +44,20 @@ public class User {
 
     public void updateRefreshToken(String updateRefreshToken) {
         this.refreshToken = updateRefreshToken;
+    }
+
+    @Builder
+    public User(String email, String password, String nickName,
+                String imageUrl, int age, String city, Role role, SocialType socialType, String socialId, String refreshToken) {
+        this.email = email;
+        this.password = password;
+        this.nickName = nickName;
+        this.imageUrl = imageUrl;
+        this.age = age;
+        this.city = city;
+        this.role = role;
+        this.socialType = socialType;
+        this.socialId = socialId;
+        this.refreshToken = refreshToken;
     }
 }
