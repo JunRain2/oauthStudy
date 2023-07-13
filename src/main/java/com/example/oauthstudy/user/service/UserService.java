@@ -24,14 +24,7 @@ public class UserService {
             return false;
         }
 
-        User user = User.builder()
-                .email(userSignUpDto.getEmail())
-                .password(userSignUpDto.getPassword())
-                .nickName(userSignUpDto.getNickName())
-                .age(userSignUpDto.getAge())
-                .city(userSignUpDto.getCity())
-                .role(Role.USER)
-                .build();
+        User user = UserSignUpDto.toEntity(userSignUpDto);
 
         user.passwordEncode(passwordEncoder);
         userRepository.save(user);

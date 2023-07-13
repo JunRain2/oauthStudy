@@ -16,7 +16,7 @@ public class UserController {
 
     final private UserService userService;
 
-    @PutMapping("/sign-up")
+    @PostMapping("/sign-up")
     public ResponseEntity<HttpStatus> signUp(@RequestBody UserSignUpDto userSignUpDto){
         if(userService.signUp(userSignUpDto)) {
             return RESPONSE_OK;

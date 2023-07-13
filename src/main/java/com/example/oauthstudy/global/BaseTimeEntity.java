@@ -1,10 +1,9 @@
 package com.example.oauthstudy.global;
 
-import com.example.oauthstudy.global.config.JpaAuditingConfig;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
@@ -12,12 +11,12 @@ import java.time.LocalDateTime;
 
 @Getter
 @MappedSuperclass
-@EntityListeners(JpaAuditingConfig.class)
+@EntityListeners(AuditingEntityListener.class)
 public abstract class BaseTimeEntity {
 
     @CreatedDate
-    protected LocalDateTime createdAt;
+    protected LocalDateTime createdTime;
 
     @LastModifiedDate
-    protected LocalDateTime modifiedAt;
+    protected LocalDateTime modifiedTime;
 }

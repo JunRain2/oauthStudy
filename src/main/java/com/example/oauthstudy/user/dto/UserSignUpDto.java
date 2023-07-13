@@ -1,5 +1,7 @@
 package com.example.oauthstudy.user.dto;
 
+import com.example.oauthstudy.user.domain.entity.Role;
+import com.example.oauthstudy.user.domain.entity.User;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,4 +29,15 @@ public class UserSignUpDto {
     private int age;
 
     private String city;
+
+    public static User toEntity(UserSignUpDto userSignUpDto) {
+        return User.builder()
+                .email(userSignUpDto.getEmail())
+                .password(userSignUpDto.getPassword())
+                .nickName(userSignUpDto.getNickName())
+                .age(userSignUpDto.getAge())
+                .city(userSignUpDto.getCity())
+                .role(Role.USER)
+                .build();
+    }
 }

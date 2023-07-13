@@ -5,11 +5,9 @@ import com.example.oauthstudy.global.oauth2.CustomOAuth2User;
 import com.example.oauthstudy.user.domain.entity.Role;
 import com.example.oauthstudy.user.domain.entity.User;
 import com.example.oauthstudy.user.domain.repository.UserRepository;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
