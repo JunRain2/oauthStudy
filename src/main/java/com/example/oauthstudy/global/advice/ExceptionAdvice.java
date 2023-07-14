@@ -1,6 +1,7 @@
 package com.example.oauthstudy.global.advice;
 
 import com.example.oauthstudy.user.exception.DuplicationException;
+import com.example.oauthstudy.user.exception.MemberNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,6 +14,11 @@ public class ExceptionAdvice {
 
     @ExceptionHandler(DuplicationException.class)
     ResponseEntity<HttpStatus> duplicationException() {
+        return RESPONSE_BAD_REQUEST;
+    }
+
+    @ExceptionHandler(MemberNotFoundException.class)
+    ResponseEntity<HttpStatus> memberNotFoundException(){
         return RESPONSE_BAD_REQUEST;
     }
 }

@@ -20,7 +20,7 @@ public class User extends BaseTimeEntity {
 
     private String email;
     private String password;
-    private String nickName;
+    private String nickname;
     private String imageUrl;
     private int age;
     private String city;
@@ -31,7 +31,7 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
 
-    private String socialId;
+    private String socialId; // 로그인한 소셜 타입의 식별자 값 (일반 로그인시 null)
     private String refreshToken;
 
     public void authorizeUser() {
@@ -47,11 +47,11 @@ public class User extends BaseTimeEntity {
     }
 
     @Builder
-    public User(String email, String password, String nickName,
+    public User(String email, String password, String nickname,
                 String imageUrl, int age, String city, Role role, SocialType socialType, String socialId, String refreshToken) {
         this.email = email;
         this.password = password;
-        this.nickName = nickName;
+        this.nickname = nickname;
         this.imageUrl = imageUrl;
         this.age = age;
         this.city = city;

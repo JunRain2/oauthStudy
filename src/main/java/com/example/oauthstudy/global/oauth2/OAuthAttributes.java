@@ -69,7 +69,7 @@ public class OAuthAttributes {
                 .socialType(socialType)
                 .socialId(oAuth2UserInfo.getId())
                 .email(UUID.randomUUID() + "@socialUser.com") // jwt 토큰을 발급하기 위한 용도뿐이므르 UUID를 사용하여 임의로 설정
-                .nickName(oAuth2UserInfo.getNickname())
+                .nickname(oAuth2UserInfo.getNickname())
                 .imageUrl(oAuth2UserInfo.getImageUrl())
                 .role(Role.GUEST)
                 .build();

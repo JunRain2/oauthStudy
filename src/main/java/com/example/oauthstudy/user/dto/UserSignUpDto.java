@@ -34,7 +34,7 @@ public class UserSignUpDto {
         return User.builder()
                 .email(userSignUpDto.getEmail())
                 .password(userSignUpDto.getPassword())
-                .nickName(userSignUpDto.getNickName())
+                .nickname(userSignUpDto.getNickName())
                 .age(userSignUpDto.getAge())
                 .city(userSignUpDto.getCity())
                 .role(Role.USER)

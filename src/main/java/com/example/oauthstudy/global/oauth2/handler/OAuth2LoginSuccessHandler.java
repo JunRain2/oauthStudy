@@ -5,6 +5,7 @@ import com.example.oauthstudy.global.oauth2.CustomOAuth2User;
 import com.example.oauthstudy.user.domain.entity.Role;
 import com.example.oauthstudy.user.domain.entity.User;
 import com.example.oauthstudy.user.domain.repository.UserRepository;
+import com.example.oauthstudy.user.exception.MemberNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -36,12 +37,12 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             if (oAuth2User.getRole() == Role.GUEST) {
                 String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
                 response.addHeader(jwtService.getAccessHeader(), "Bearer " + accessToken);
-                response.sendRedirect("oauth2/sing-up");
+                response.sendRedirect("oauth2/sign-up");
 
                 // Role을 GUEST에서 USER로 업데이트
                 jwtService.sendAccessAndRefreshToken(response, accessToken, null);
                 User findUser = userRepository.findByEmail(oAuth2User.getEmail())
-                        .orElseThrow(() -> new IllegalArgumentException("이메일에 해당하는 유저가 없습니다"));
+                        .orElseThrow(MemberNotFoundException::new);
                 findUser.authorizeUser();
             } else {
                 loginSuccess(response, oAuth2User);
