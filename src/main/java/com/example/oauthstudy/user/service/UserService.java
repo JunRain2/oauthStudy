@@ -20,7 +20,7 @@ public class UserService {
 
     public boolean signUp(UserSignUpDto userSignUpDto){
         if (userRepository.existsByEmail(userSignUpDto.getEmail())
-                || userRepository.existsByNickName(userSignUpDto.getNickName())) {
+                || userRepository.existsByNickname(userSignUpDto.getNickName())) {
             return false;
         }
 

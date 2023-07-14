@@ -39,11 +39,13 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 response.addHeader(jwtService.getAccessHeader(), "Bearer " + accessToken);
                 response.sendRedirect("oauth2/sign-up");
 
-                // Role을 GUEST에서 USER로 업데이트
+
                 jwtService.sendAccessAndRefreshToken(response, accessToken, null);
-                User findUser = userRepository.findByEmail(oAuth2User.getEmail())
-                        .orElseThrow(MemberNotFoundException::new);
-                findUser.authorizeUser();
+
+                // Role을 GUEST에서 USER로 업데이트
+//                User findUser = userRepository.findByEmail(oAuth2User.getEmail())
+//                        .orElseThrow(MemberNotFoundException::new);
+//                findUser.authorizeUser();
             } else {
                 loginSuccess(response, oAuth2User);
             }
