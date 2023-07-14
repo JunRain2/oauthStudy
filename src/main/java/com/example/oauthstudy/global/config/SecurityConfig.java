@@ -9,6 +9,7 @@ import com.example.oauthstudy.global.login.service.LoginService;
 import com.example.oauthstudy.global.oauth2.handler.OAuth2LoginFailureHandler;
 import com.example.oauthstudy.global.oauth2.handler.OAuth2LoginSuccessHandler;
 import com.example.oauthstudy.global.oauth2.service.CustomOAuth2UserService;
+import com.example.oauthstudy.user.domain.entity.Role;
 import com.example.oauthstudy.user.domain.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -65,6 +66,7 @@ public class SecurityConfig {
                 // 기본페이지, css, image, js 하위 폴더에 있는 자료들은 모두 접근 가능
                 .antMatchers("/", "/css/**", "/images/**", "/js/**", "favicon.ioc").permitAll()
                 .antMatchers("/sign-up").permitAll() // 회원가입 접근 가능
+                .antMatchers("/oauth2/sign-up").hasRole(Role.GUEST.toString()) // oauth2User 의 회원가입
                 .anyRequest().authenticated() // 위의 경로 외에는 모두 인증된 사용자만 접근 가능
                 .and()
 

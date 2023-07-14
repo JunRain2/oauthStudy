@@ -3,6 +3,7 @@ package com.example.oauthstudy.global.jwt.service;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.example.oauthstudy.user.domain.repository.UserRepository;
+import com.example.oauthstudy.user.exception.MemberNotFoundException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -110,7 +111,7 @@ public class JwtService {
         userRepository.findByEmail(email)
                 .ifPresentOrElse(
                         user -> user.updateRefreshToken(refreshToken),
-                        () -> new Exception("일치하는 회원이 없습니다")
+                        MemberNotFoundException::new
                 );
 
     }

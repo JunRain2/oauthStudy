@@ -1,6 +1,7 @@
 package com.example.oauthstudy.user.domain.entity;
 
 import com.example.oauthstudy.global.BaseTimeEntity;
+import com.example.oauthstudy.user.dto.Oauth2UserDto;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -59,5 +60,12 @@ public class User extends BaseTimeEntity {
         this.socialType = socialType;
         this.socialId = socialId;
         this.refreshToken = refreshToken;
+    }
+
+    public void signUp(Oauth2UserDto oauth2UserDto) {
+        this.email = oauth2UserDto.getEmail();
+        this.city = oauth2UserDto.getCity();
+        this.age = oauth2UserDto.getAge();
+        this.role = Role.USER;
     }
 }

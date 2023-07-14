@@ -37,8 +37,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             if (oAuth2User.getRole() == Role.GUEST) {
                 String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
                 response.addHeader(jwtService.getAccessHeader(), "Bearer " + accessToken);
-                response.sendRedirect("oauth2/sign-up");
-
+                response.sendRedirect("/oauth2/sign-up");
 
                 jwtService.sendAccessAndRefreshToken(response, accessToken, null);
 
@@ -46,7 +45,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 //                User findUser = userRepository.findByEmail(oAuth2User.getEmail())
 //                        .orElseThrow(MemberNotFoundException::new);
 //                findUser.authorizeUser();
-            } else {
+            } else if(oAuth2User.getRole() == Role.USER){
                 loginSuccess(response, oAuth2User);
             }
         } catch (Exception e) {
