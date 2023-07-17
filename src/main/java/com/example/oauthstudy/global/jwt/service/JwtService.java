@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.Optional;
 
+// jwt 토큰의 전반적인 기능을 담당하는 클래스 -> 헤더에 담아 사용자에게 보내기, 헤더에서 추출하기, AccessToken, RefreshToken 생성하기
 @Service
 @RequiredArgsConstructor
 @Getter
@@ -66,8 +67,8 @@ public class JwtService {
     public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) {
         response.setStatus(HttpServletResponse.SC_OK);
 
-        response.setHeader(accessToken, refreshToken);
-        response.setHeader(refreshToken, accessToken);
+        response.setHeader(accessHeader, accessToken);
+        response.setHeader(refreshHeader, refreshToken);
         log.info("Access Token, Refresh Token 헤더 설정 완료");
     }
 

@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import static com.example.oauthstudy.global.HttpStatusResponseEntity.RESPONSE_BAD_REQUEST;
 import static com.example.oauthstudy.global.HttpStatusResponseEntity.RESPONSE_OK;
@@ -39,6 +40,12 @@ public class UserController {
 
         return RESPONSE_OK;
 
+    }
+
+    @GetMapping("/logout")
+    private ResponseEntity<HttpStatus> logout(HttpServletRequest request) {
+
+        return RESPONSE_OK;
     }
 
 
