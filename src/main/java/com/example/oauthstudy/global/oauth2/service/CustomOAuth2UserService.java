@@ -42,7 +42,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         // userRequest에서 registrationId 추출 후 registrationId으로 SocialType 저장
         // http://localhost:8080/oauth2/authorization/kakao에서 kakao가 registrationId
-        // userNameAttributeName은 이후에 nameAttributeKet로 설정
+        // userNameAttributeName은 이후에 nameAttributeKey로 설정
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         SocialType socialType = getSocialType(registrationId);
         String userNameAttributeName = userRequest.getClientRegistration()
