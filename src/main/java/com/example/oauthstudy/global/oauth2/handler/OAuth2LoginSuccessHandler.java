@@ -3,9 +3,7 @@ package com.example.oauthstudy.global.oauth2.handler;
 import com.example.oauthstudy.global.jwt.service.JwtService;
 import com.example.oauthstudy.global.oauth2.CustomOAuth2User;
 import com.example.oauthstudy.user.domain.entity.Role;
-import com.example.oauthstudy.user.domain.entity.User;
 import com.example.oauthstudy.user.domain.repository.UserRepository;
-import com.example.oauthstudy.user.exception.MemberNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -45,7 +43,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 //                User findUser = userRepository.findByEmail(oAuth2User.getEmail())
 //                        .orElseThrow(MemberNotFoundException::new);
 //                findUser.authorizeUser();
-            } else if(oAuth2User.getRole() == Role.USER){
+            } else if (oAuth2User.getRole() == Role.USER) {
                 loginSuccess(response, oAuth2User);
             }
         } catch (Exception e) {
