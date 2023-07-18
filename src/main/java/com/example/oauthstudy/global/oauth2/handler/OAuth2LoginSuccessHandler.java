@@ -36,7 +36,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
                 response.addHeader(jwtService.getAccessHeader(), "Bearer " + accessToken);
 
-                jwtService.sendAccessAndRefreshToken(response, accessToken, null);
+                jwtService.sendAccessToken(response, accessToken);
 
                 response.sendRedirect("/oauth2/sign-up");
 
