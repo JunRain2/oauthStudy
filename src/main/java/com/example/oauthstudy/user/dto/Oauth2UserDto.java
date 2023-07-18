@@ -14,11 +14,6 @@ import javax.validation.constraints.Pattern;
 @Getter
 public class Oauth2UserDto {
 
-    @NotEmpty
-    @Email(message = "유효하지 않은 이메일 형식입니다.",
-            regexp = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$")
-    private String email;
-
     private int age;
 
     private String city;

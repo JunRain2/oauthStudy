@@ -63,7 +63,6 @@ public class User extends BaseTimeEntity {
     }
 
     public void signUp(Oauth2UserDto oauth2UserDto) {
-        this.email = oauth2UserDto.getEmail();
         this.city = oauth2UserDto.getCity();
         this.age = oauth2UserDto.getAge();
         this.role = Role.USER;

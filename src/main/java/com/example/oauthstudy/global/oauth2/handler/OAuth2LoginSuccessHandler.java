@@ -35,9 +35,10 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             if (oAuth2User.getRole() == Role.GUEST) {
                 String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
                 response.addHeader(jwtService.getAccessHeader(), "Bearer " + accessToken);
-                response.sendRedirect("/oauth2/sign-up");
 
                 jwtService.sendAccessAndRefreshToken(response, accessToken, null);
+
+                response.sendRedirect("/oauth2/sign-up");
 
                 // Role을 GUEST에서 USER로 업데이트
 //                User findUser = userRepository.findByEmail(oAuth2User.getEmail())

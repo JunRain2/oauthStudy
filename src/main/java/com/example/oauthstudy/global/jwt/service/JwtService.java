@@ -59,7 +59,7 @@ public class JwtService {
     public void sendAccessToken(HttpServletResponse response, String accessToken) {
         response.setStatus(HttpServletResponse.SC_OK);
 
-        response.setHeader(accessHeader,"Bearer " + accessToken);
+        response.setHeader(accessHeader, "Bearer " + accessToken);
         log.info("재발급된 Acess Token : {}", accessToken);
     }
 
@@ -112,7 +112,10 @@ public class JwtService {
     public void updateRefreshToken(String email, String refreshToken) {
         userRepository.findByEmail(email)
                 .ifPresentOrElse(
-                        user -> user.updateRefreshToken(refreshToken),
+                        user -> {
+                            user.updateRefreshToken(refreshToken);
+                            userRepository.save(user);
+                        },
                         MemberNotFoundException::new
                 );
 
