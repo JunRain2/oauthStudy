@@ -108,6 +108,7 @@ public class JwtService {
     }
 
     // 회원가입시 RefreshToken이 null로 저장되기 때문에, 로그인 시 RefreshToken을 발급하면서 발급한 RefreshToken을 DB에 저장하는 메소드
+    // 추후 Redis에 저장하도록 변경
     public void updateRefreshToken(String email, String refreshToken) {
         userRepository.findByEmail(email)
                 .ifPresentOrElse(

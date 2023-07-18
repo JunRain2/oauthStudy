@@ -8,7 +8,8 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import java.util.Collection;
 import java.util.Map;
 
-// 기본으로 반환되는 OAuth2User 객체에서 추가할 필드가 있기 때문에 사용
+// OAuth로부터 얻은 사용자 정보를 나타냄.
+// DefaultIAuth2User + 알파
 @Getter
 public class CustomOAuth2User extends DefaultOAuth2User {
 

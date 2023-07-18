@@ -64,6 +64,7 @@ public class OAuthAttributes {
                 .build();
     }
 
+    // UserEntity로 변경
     public User toEntity(SocialType socialType, OAuth2UserInfo oAuth2UserInfo) {
         return User.builder()
                 .socialType(socialType)

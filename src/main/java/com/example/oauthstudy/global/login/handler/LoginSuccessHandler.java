@@ -12,6 +12,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+// 로그인 인증 성공시 핸들러
 @RequiredArgsConstructor
 @Slf4j
 public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
@@ -45,9 +46,8 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     }
 
     private String extractUsername(Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return userDetails.getUsername();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal(); // UserDetails를 반환
+        return userDetails.getUsername(); // username -> email
     }
-
 
 }
