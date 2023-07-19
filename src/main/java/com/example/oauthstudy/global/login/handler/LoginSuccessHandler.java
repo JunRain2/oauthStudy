@@ -31,7 +31,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                                         Authentication authentication) {
         String email = extractUsername(authentication); // 인증 정보에서 Username인 email 추출
         String accessToken = jwtService.createAccessToken(email);
-        String refreshToken = jwtService.createRefreshToken();
+        String refreshToken = jwtService.createRefreshToken(email);
 
         jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
 

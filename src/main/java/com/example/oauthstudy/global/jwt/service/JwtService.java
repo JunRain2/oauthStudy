@@ -52,11 +52,12 @@ public class JwtService {
                 .sign(Algorithm.HMAC512(secretKey));
     }
 
-    public String createRefreshToken() {
+    public String createRefreshToken(String email) {
         Date now = new Date();
         return JWT.create()
                 .withSubject(REFRESH_TOKEN_SUBJECT)
                 .withExpiresAt(new Date(now.getTime() + refreshTokenExpirationPeriod))
+                .withClaim(EMAIL_CLAIM, email)
                 .sign(Algorithm.HMAC512(secretKey));
     }
 
