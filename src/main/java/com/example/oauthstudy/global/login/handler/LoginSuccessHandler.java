@@ -1,6 +1,7 @@
 package com.example.oauthstudy.global.login.handler;
 
 import com.example.oauthstudy.global.jwt.service.JwtService;
+import com.example.oauthstudy.global.refreshtoken.RefreshToken;
 import com.example.oauthstudy.global.refreshtoken.RefreshTokenRepository;
 import com.example.oauthstudy.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,11 +37,10 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
 
         // 회원가입시 RefreshToken이 null이기 때문에 로그인 성공 시 redis에 따로 저장
-        refreshTokenRepository.findById(email)
-                        .ifPresent(toekn -> {
-                            toekn.updateRefreshToken(refreshToken);
-                            refreshTokenRepository.save(toekn);
-                        });
+        RefreshToken token = refreshTokenRepository.findById(email)
+                .orElse(new RefreshToken(email));
+        token.updateRefreshToken(refreshToken);
+        refreshTokenRepository.save(token);
 
         log.info("로그인에 성공하였습니다. 이메일 : {}", email);
         log.info("로그인에 성공하였습니다. AccessToken : {}", accessToken);
