@@ -2,6 +2,8 @@ package com.example.oauthstudy.global.jwt.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.example.oauthstudy.global.refreshtoken.RefreshToken;
+import com.example.oauthstudy.global.refreshtoken.RefreshTokenRepository;
 import com.example.oauthstudy.user.domain.repository.UserRepository;
 import com.example.oauthstudy.user.exception.MemberNotFoundException;
 import lombok.Getter;
@@ -26,7 +28,10 @@ public class JwtService {
     private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
     private static final String EMAIL_CLAIM = "email";
     private static final String BEARER = "Bearer ";
+
     private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+
     @Value("${jwt.secretKey}")
     private String secretKey;
     @Value("${jwt.access.expiration}")
@@ -110,15 +115,12 @@ public class JwtService {
     // 회원가입시 RefreshToken이 null로 저장되기 때문에, 로그인 시 RefreshToken을 발급하면서 발급한 RefreshToken을 DB에 저장하는 메소드
     // 추후 Redis에 저장하도록 변경
     public void updateRefreshToken(String email, String refreshToken) {
-        userRepository.findByEmail(email)
-                .ifPresentOrElse(
-                        user -> {
-                            user.updateRefreshToken(refreshToken);
-                            userRepository.save(user);
-                        },
-                        MemberNotFoundException::new
-                );
+        RefreshToken token = refreshTokenRepository.findById(email)
+                .orElse(new RefreshToken(email));
 
+        token.updateRefreshToken(refreshToken);
+
+        refreshTokenRepository.save(token);
     }
 
     public boolean isTokenValid(String token) {

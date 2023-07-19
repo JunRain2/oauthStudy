@@ -9,6 +9,7 @@ import com.example.oauthstudy.global.login.service.LoginService;
 import com.example.oauthstudy.global.oauth2.handler.OAuth2LoginFailureHandler;
 import com.example.oauthstudy.global.oauth2.handler.OAuth2LoginSuccessHandler;
 import com.example.oauthstudy.global.oauth2.service.CustomOAuth2UserService;
+import com.example.oauthstudy.global.refreshtoken.RefreshTokenRepository;
 import com.example.oauthstudy.user.domain.entity.Role;
 import com.example.oauthstudy.user.domain.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,7 +24,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
@@ -37,10 +37,12 @@ public class SecurityConfig {
     private final LoginService loginService;
     private final JwtService jwtService;
     private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final ObjectMapper objectMapper;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
+
 
     @Value("${jwt.strength}")
     private int strength;
@@ -97,7 +99,7 @@ public class SecurityConfig {
      * 또한, FormLogin과 동일하게 AuthenticationManager로는 구현체인 ProviderManager 사용(return ProviderManager)
      */
     @Bean
-    public AuthenticationManager authenticationManager(){
+    public AuthenticationManager authenticationManager() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(passwordEncoder());
         provider.setUserDetailsService(loginService);
@@ -106,7 +108,7 @@ public class SecurityConfig {
 
     @Bean
     public LoginSuccessHandler loginSuccessHandler() {
-        return new LoginSuccessHandler(jwtService, userRepository);
+        return new LoginSuccessHandler(jwtService, userRepository, refreshTokenRepository);
     }
 
     @Bean
@@ -132,7 +134,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
-        return new JwtAuthenticationProcessingFilter(jwtService, userRepository);
+        return new JwtAuthenticationProcessingFilter(jwtService, userRepository, refreshTokenRepository);
     }
 
 }

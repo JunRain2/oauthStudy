@@ -2,17 +2,19 @@ package com.example.oauthstudy.global.jwt.filter;
 
 import com.example.oauthstudy.global.jwt.service.JwtService;
 import com.example.oauthstudy.global.jwt.util.PasswordUtil;
+import com.example.oauthstudy.global.refreshtoken.RefreshToken;
+import com.example.oauthstudy.global.refreshtoken.RefreshTokenRepository;
 import com.example.oauthstudy.user.domain.entity.User;
 import com.example.oauthstudy.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -24,7 +26,7 @@ import java.io.IOException;
 /**
  * Jwt 인증 필터
  * "/login" 이외의 URI 요청이 왔을때 처리하는 필터
- *
+ * <p>
  * 기본적으로 사용자는 요청 헤더에 AccessToken만을 담아서 요청
  * AccessToken 만료 시에만 RefreshToken을 요청 헤더에 AccessToken과 함께 요청
  */
@@ -36,11 +38,13 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         // "/login"에 대해 인증절차는 수행하지만, 해당 필터는 수행하지 않음
         if (request.getRequestURI().equals(NO_CHECK_URL)) {
             filterChain.doFilter(request, response); // "/login" 요청이 들어오면, 다음 필터 호출
@@ -55,7 +59,10 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
         // Refresh Token이 존재하다면, DB의 Refresh Token과 일치하는지 판단 후, 일치하면 AccessToken을 재발급
         if (refreshToken != null) {
-            checkRefreshTokenAndReIssueAccessToken(response, refreshToken);
+            String accessToken = jwtService.extractAccessToken(request).orElseThrow();
+            String email = jwtService.extractEmail(accessToken).orElseThrow();
+
+            checkRefreshTokenAndReIssueAccessToken(response, email);
             return; // RefreshToken을 보낸 경우 AccessToken을 재발급 하고 인증 처리는 하지 않게 하기위해 바로 return으로 필터 진행 막기
         }
 
@@ -68,7 +75,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     }
 
     private void checkAccessTokenAndAuthentication(HttpServletRequest request, HttpServletResponse response,
-                                                   FilterChain filterChain) throws ServletException, IOException{
+                                                   FilterChain filterChain) throws ServletException, IOException {
         log.info("checkAccessTokenAndAuthentication() 호출");
         jwtService.extractAccessToken(request)
                 .filter(jwtService::isTokenValid)
@@ -110,20 +117,18 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     }
 
     // Refresh Token을 통해 DB에서 유저를 찾고, Access Token을 재발급
-    public void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String refreshToken) {
-        userRepository.findByRefreshToken(refreshToken)
-                .ifPresent(user -> {
-                    String reIssuedRefreshToken = reIssueRefreshToken(user);
-                    jwtService.sendAccessAndRefreshToken(response, jwtService.createAccessToken(user.getEmail()),
-                            reIssuedRefreshToken);
-                });
+    public void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String email) {
+        RefreshToken token = refreshTokenRepository.findById(email).orElseThrow();
+        String reIssuedRefreshToken = reIssueRefreshToken(token);
+        jwtService.sendAccessAndRefreshToken(response, jwtService.createAccessToken(token.getEmail()
+        ), reIssuedRefreshToken);
     }
 
-    // Refresh Token 재발급 & DB에 Refresh Token 업데이트
-    private String reIssueRefreshToken(User user) {
+    // Refresh Token 재발급 & Redis에 Refresh Token 업데이트
+    private String reIssueRefreshToken(RefreshToken refreshToken) {
         String reIssuedRefreshToken = jwtService.createRefreshToken();
-        user.updateRefreshToken(reIssuedRefreshToken);
-        userRepository.saveAndFlush(user);
+        refreshToken.updateRefreshToken(reIssuedRefreshToken);
+        refreshTokenRepository.save(refreshToken);
         return reIssuedRefreshToken;
     }
 }

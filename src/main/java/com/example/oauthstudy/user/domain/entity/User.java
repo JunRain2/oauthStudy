@@ -33,7 +33,6 @@ public class User extends BaseTimeEntity {
     private SocialType socialType;
 
     private String socialId; // 로그인한 소셜 타입의 식별자 값 (일반 로그인시 null)
-    private String refreshToken;
 
     public void authorizeUser() {
         this.role = Role.USER;
@@ -43,13 +42,10 @@ public class User extends BaseTimeEntity {
         this.password = passwordEncoder.encode(this.password);
     }
 
-    public void updateRefreshToken(String updateRefreshToken) {
-        this.refreshToken = updateRefreshToken;
-    }
 
     @Builder
     public User(String email, String password, String nickname,
-                String imageUrl, int age, String city, Role role, SocialType socialType, String socialId, String refreshToken) {
+                String imageUrl, int age, String city, Role role, SocialType socialType, String socialId) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
@@ -59,7 +55,6 @@ public class User extends BaseTimeEntity {
         this.role = role;
         this.socialType = socialType;
         this.socialId = socialId;
-        this.refreshToken = refreshToken;
     }
 
     public void signUp(Oauth2UserDto oauth2UserDto) {
