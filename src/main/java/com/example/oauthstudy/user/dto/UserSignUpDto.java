@@ -1,6 +1,7 @@
 package com.example.oauthstudy.user.dto;
 
 import com.example.oauthstudy.user.domain.entity.Role;
+import com.example.oauthstudy.user.domain.entity.SocialType;
 import com.example.oauthstudy.user.domain.entity.User;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -38,6 +39,7 @@ public class UserSignUpDto {
                 .age(userSignUpDto.getAge())
                 .city(userSignUpDto.getCity())
                 .role(Role.USER)
+                .socialType(SocialType.OUR)
                 .build();
     }
 }
