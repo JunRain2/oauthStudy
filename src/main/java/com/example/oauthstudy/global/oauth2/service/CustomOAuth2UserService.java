@@ -5,6 +5,7 @@ import com.example.oauthstudy.global.oauth2.OAuthAttributes;
 import com.example.oauthstudy.user.domain.entity.SocialType;
 import com.example.oauthstudy.user.domain.entity.User;
 import com.example.oauthstudy.user.domain.repository.UserRepository;
+import com.example.oauthstudy.user.exception.DuplicationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -80,6 +81,13 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     // 생성된 User 객체를 DB에 저장 : socialType, socialId, email, role 값만 있는 상태
     private User saveUser(OAuthAttributes attributes, SocialType socialType) {
         User createdUser = attributes.toEntity(socialType, attributes.getOAuth2UserInfo());
+
+        boolean emailExists = userRepository.existsByEmail(createdUser.getEmail());
+        if (emailExists) {
+            log.info("중복된 이메일");
+            throw new DuplicationException();
+        }
+
         return userRepository.save(createdUser);
     }
 
