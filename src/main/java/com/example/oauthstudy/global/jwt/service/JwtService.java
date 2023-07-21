@@ -5,7 +5,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.example.oauthstudy.global.refreshtoken.RefreshToken;
 import com.example.oauthstudy.global.refreshtoken.RefreshTokenRepository;
 import com.example.oauthstudy.user.domain.repository.UserRepository;
-import com.example.oauthstudy.user.exception.MemberNotFoundException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -110,6 +109,22 @@ public class JwtService {
         } catch (Exception e) {
             log.error("액세스 토큰이 유효하지 않습니다");
             return Optional.empty();
+        }
+    }
+
+    public Long extractExpiration(String token) {
+        try {
+            Long time = JWT.require(Algorithm.HMAC512(secretKey))
+                    .build()
+                    .verify(token) // 유효기간이 유효하지 않으면 예외 발생
+                    .getExpiresAt()
+                    .getTime();
+            Date now = new Date();
+
+            return time - now.getTime();
+        } catch (Exception e) {
+            log.error("액세스 토큰이 유효하지 않습니다");
+            return 0L;
         }
     }
 
