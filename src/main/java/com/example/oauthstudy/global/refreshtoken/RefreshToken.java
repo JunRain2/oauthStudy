@@ -1,14 +1,12 @@
 package com.example.oauthstudy.global.refreshtoken;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.TimeToLive;
 
 
-@RedisHash(value = "refreshToken", timeToLive = 1209600)
+@RedisHash(value = "refreshToken")
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public class RefreshToken {
@@ -18,13 +16,16 @@ public class RefreshToken {
 
     private String refreshToken;
 
-    @Builder
-    public RefreshToken(String email, String refreshToken) {
-        this.email = email;
+    @TimeToLive()
+    private Long refreshTokenExpirationPeriod;
+
+    public void updateRefreshToken(String refreshToken, Long Expiration) {
         this.refreshToken = refreshToken;
+        this.refreshTokenExpirationPeriod = Expiration;
+
     }
 
-    public void updateRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
+    public RefreshToken(String email) {
+        this.email = email;
     }
 }

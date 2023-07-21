@@ -132,11 +132,10 @@ public class JwtService {
     // 추후 Redis에 저장하도록 변경
     public void updateRefreshToken(String email, String refreshToken) {
         RefreshToken token = refreshTokenRepository.findById(email)
-                .orElse(RefreshToken.builder()
-                        .email(email)
-                        .build());
+                .orElse(new RefreshToken(email));
 
-        token.updateRefreshToken(refreshToken);
+        token.updateRefreshToken(refreshToken,
+                refreshTokenExpirationPeriod/1000);
 
         refreshTokenRepository.save(token);
     }
