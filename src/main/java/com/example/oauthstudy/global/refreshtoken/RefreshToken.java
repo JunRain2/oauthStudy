@@ -7,7 +7,7 @@ import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
 
 
-@RedisHash(value = "refreshToken")
+@RedisHash(value = "refreshToken", timeToLive = 1209600)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public class RefreshToken {
@@ -25,7 +25,10 @@ public class RefreshToken {
         this.refreshToken = refreshToken;
     }
 
-    public RefreshToken(String email) {
+    @Builder
+    public RefreshToken(String email, String refreshToken, Long refreshTokenExpirationPeriod) {
         this.email = email;
+        this.refreshToken = refreshToken;
+        this.refreshTokenExpirationPeriod = refreshTokenExpirationPeriod/1000;
     }
 }
