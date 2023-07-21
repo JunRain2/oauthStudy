@@ -1,10 +1,11 @@
 package com.example.oauthstudy.global.refreshtoken;
 
-import lombok.*;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
-import org.springframework.data.redis.core.TimeToLive;
 
 
 @RedisHash(value = "refreshToken", timeToLive = 1209600)
@@ -17,18 +18,13 @@ public class RefreshToken {
 
     private String refreshToken;
 
-    @TimeToLive
-    @Value("${jwt.refresh.expiration}")
-    private Long refreshTokenExpirationPeriod;
-
-    public void updateRefreshToken(String refreshToken) {
+    @Builder
+    public RefreshToken(String email, String refreshToken) {
+        this.email = email;
         this.refreshToken = refreshToken;
     }
 
-    @Builder
-    public RefreshToken(String email, String refreshToken, Long refreshTokenExpirationPeriod) {
-        this.email = email;
+    public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
-        this.refreshTokenExpirationPeriod = refreshTokenExpirationPeriod/1000;
     }
 }

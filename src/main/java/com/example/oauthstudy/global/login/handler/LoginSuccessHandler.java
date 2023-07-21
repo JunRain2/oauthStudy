@@ -40,7 +40,6 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         RefreshToken token = refreshTokenRepository.findById(email)
                 .orElse(RefreshToken.builder()
                         .email(email)
-                        .refreshTokenExpirationPeriod(jwtService.getRefreshTokenExpirationPeriod())
                         .build());
         token.updateRefreshToken(refreshToken);
         refreshTokenRepository.save(token);
