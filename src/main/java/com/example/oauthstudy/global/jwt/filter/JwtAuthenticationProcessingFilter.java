@@ -126,7 +126,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     // Refresh Token 재발급 & Redis에 Refresh Token 업데이트
     private String reIssueRefreshToken(RefreshToken refreshToken, String email) {
         String reIssuedRefreshToken = jwtService.createRefreshToken(email);
-        refreshToken.updateRefreshToken(reIssuedRefreshToken,
+        refreshToken.setRefreshTokenAndTimeToLive(reIssuedRefreshToken,
                 jwtService.getRefreshTokenExpirationPeriod()/1000);
         refreshTokenRepository.save(refreshToken);
         return reIssuedRefreshToken;

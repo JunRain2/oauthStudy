@@ -39,7 +39,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         // 회원가입시 RefreshToken이 null이기 때문에 로그인 성공 시 redis에 따로 저장
         RefreshToken token = refreshTokenRepository.findById(email)
                 .orElse(new RefreshToken(email));
-        token.updateRefreshToken(refreshToken,
+        token.setRefreshTokenAndTimeToLive(refreshToken,
                 jwtService.getRefreshTokenExpirationPeriod()/1000);
         refreshTokenRepository.save(token);
 

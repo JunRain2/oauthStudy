@@ -19,7 +19,7 @@ public class RefreshToken {
     @TimeToLive()
     private Long refreshTokenExpirationPeriod;
 
-    public void updateRefreshToken(String refreshToken, Long Expiration) {
+    public void setRefreshTokenAndTimeToLive(String refreshToken, Long Expiration) {
         this.refreshToken = refreshToken;
         this.refreshTokenExpirationPeriod = Expiration;
 

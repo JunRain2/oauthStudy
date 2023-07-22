@@ -134,7 +134,7 @@ public class JwtService {
         RefreshToken token = refreshTokenRepository.findById(email)
                 .orElse(new RefreshToken(email));
 
-        token.updateRefreshToken(refreshToken,
+        token.setRefreshTokenAndTimeToLive(refreshToken,
                 refreshTokenExpirationPeriod/1000);
 
         refreshTokenRepository.save(token);
