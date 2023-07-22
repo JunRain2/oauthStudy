@@ -2,6 +2,7 @@ package com.example.oauthstudy.global.jwt.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.example.oauthstudy.global.blacklist.BlackListRepository;
 import com.example.oauthstudy.global.refreshtoken.RefreshToken;
 import com.example.oauthstudy.global.refreshtoken.RefreshTokenRepository;
 import com.example.oauthstudy.user.domain.repository.UserRepository;
@@ -30,6 +31,7 @@ public class JwtService {
 
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final BlackListRepository blackListRepository;
 
     @Value("${jwt.secretKey}")
     private String secretKey;
@@ -121,7 +123,7 @@ public class JwtService {
                     .getTime();
             Date now = new Date();
 
-            return time - now.getTime();
+            return (time - now.getTime())/1000;
         } catch (Exception e) {
             log.error("액세스 토큰이 유효하지 않습니다");
             return 0L;
@@ -140,10 +142,20 @@ public class JwtService {
         refreshTokenRepository.save(token);
     }
 
-    public boolean isTokenValid(String token) {
+    public boolean isRefrehTokenValid(String token) {
         try {
             JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
             return true;
+        } catch (Exception e) {
+            log.error("유효하지 않은 토큰입니다. {}", e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean isAccessTokenValid(String token) {
+        try {
+            JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
+            return !blackListRepository.existsById(token);
         } catch (Exception e) {
             log.error("유효하지 않은 토큰입니다. {}", e.getMessage());
             return false;

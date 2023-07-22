@@ -5,13 +5,14 @@ import com.example.oauthstudy.user.dto.Oauth2UserDto;
 import com.example.oauthstudy.user.dto.UserSignUpDto;
 import com.example.oauthstudy.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import static com.example.oauthstudy.global.HttpStatusResponseEntity.RESPONSE_BAD_REQUEST;
 import static com.example.oauthstudy.global.HttpStatusResponseEntity.RESPONSE_OK;
@@ -24,8 +25,8 @@ public class UserController {
     final private JwtService jwtService;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<HttpStatus> signUp(@RequestBody UserSignUpDto userSignUpDto){
-        if(userService.signUp(userSignUpDto)) {
+    public ResponseEntity<HttpStatus> signUp(@RequestBody UserSignUpDto userSignUpDto) {
+        if (userService.signUp(userSignUpDto)) {
             return RESPONSE_OK;
         }
         return RESPONSE_BAD_REQUEST;
@@ -41,13 +42,6 @@ public class UserController {
         return RESPONSE_OK;
 
     }
-
-    @GetMapping("/logout")
-    private ResponseEntity<HttpStatus> logout(HttpServletRequest request) {
-
-        return RESPONSE_OK;
-    }
-
 
     @GetMapping("/jwt-test")
     public ResponseEntity<HttpStatus> jwtTest() {

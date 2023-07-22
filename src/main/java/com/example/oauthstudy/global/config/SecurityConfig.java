@@ -1,11 +1,13 @@
 package com.example.oauthstudy.global.config;
 
+import com.example.oauthstudy.global.blacklist.BlackListRepository;
 import com.example.oauthstudy.global.jwt.filter.JwtAuthenticationProcessingFilter;
 import com.example.oauthstudy.global.jwt.service.JwtService;
 import com.example.oauthstudy.global.login.filter.CustomJsonUsernamePasswordAuthenticationFilter;
 import com.example.oauthstudy.global.login.handler.LoginFailureHandler;
 import com.example.oauthstudy.global.login.handler.LoginSuccessHandler;
 import com.example.oauthstudy.global.login.service.LoginService;
+import com.example.oauthstudy.global.logout.handler.SimpleUrlLogoutSuccessHandler;
 import com.example.oauthstudy.global.oauth2.handler.OAuth2LoginFailureHandler;
 import com.example.oauthstudy.global.oauth2.handler.OAuth2LoginSuccessHandler;
 import com.example.oauthstudy.global.oauth2.service.CustomOAuth2UserService;
@@ -38,9 +40,11 @@ public class SecurityConfig {
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final BlackListRepository blackListRepository;
     private final ObjectMapper objectMapper;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+    private final SimpleUrlLogoutSuccessHandler logoutSuccessHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
 
 
@@ -72,11 +76,19 @@ public class SecurityConfig {
                 .anyRequest().authenticated() // 위의 경로 외에는 모두 인증된 사용자만 접근 가능
                 .and()
 
+                .logout() // 로그아웃 기능 작동함
+                .logoutUrl("/logout") // 로그아웃 처리 URL, default: /logout, 원칙적으로 post 방식만 지원
+                .logoutSuccessUrl("/login") // 로그아웃 성공 후 이동페이지
+                .logoutSuccessHandler(logoutSuccessHandler)
+                .deleteCookies("Authorization", "Authorization-Refresh") // 로그아웃 후 쿠키 삭제
+
+                .and()
                 // 소셜 로그인 설정
                 .oauth2Login() // OAuth2LoginConfigurer을 반환하여 OAuth2 로그인에 관한 다양한 기능을 사용
                 .successHandler(oAuth2LoginSuccessHandler) // 동의하고 계속 하기 눌렀을 때 Handler 설정
                 .failureHandler(oAuth2LoginFailureHandler) // 소셜 로그인 실패 시 핸들러 설정
                 .userInfoEndpoint().userService(customOAuth2UserService); // OAuth2 로그인의 로직을 담당하는 Service를 설정
+
 
         // LogoutFilter 이후에 로그인 필터 동작 수행
         // LogoutFilter -> jwtAuthenticationProcessingFilter -> customJsonUsernamePasswordAuthenticationFilter
@@ -134,7 +146,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
-        return new JwtAuthenticationProcessingFilter(jwtService, userRepository, refreshTokenRepository);
+        return new JwtAuthenticationProcessingFilter(jwtService, userRepository, refreshTokenRepository, blackListRepository);
     }
 
 }
