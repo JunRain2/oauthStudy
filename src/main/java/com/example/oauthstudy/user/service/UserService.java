@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 
@@ -24,10 +25,9 @@ import javax.transaction.Transactional;
 @Slf4j
 public class UserService {
     private final UserRepository userRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final BlackListRepository blackListRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final HttpServletRequest request;
 
     public boolean signUp(UserSignUpDto userSignUpDto){
 
@@ -52,4 +52,12 @@ public class UserService {
 
     }
 
+
+    public User getLoginUser() {
+        log.info("어노테이션 실행");
+        String accessToken = jwtService.extractAccessToken(request).orElseThrow();
+        String email = jwtService.extractEmail(accessToken).orElseThrow();
+
+        return userRepository.findByEmail(email).orElseThrow();
+    }
 }

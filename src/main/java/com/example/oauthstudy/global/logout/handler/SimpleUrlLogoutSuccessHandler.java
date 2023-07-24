@@ -7,7 +7,6 @@ import com.example.oauthstudy.global.refreshtoken.RefreshToken;
 import com.example.oauthstudy.global.refreshtoken.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AbstractAuthenticationTargetUrlRequestHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
@@ -26,12 +25,13 @@ implements LogoutSuccessHandler {
     private final RefreshTokenRepository refreshTokenRepository;
     private final BlackListRepository blackListRepository;
 
+    // 로그아웃 성공시 이메일에 해당하는 redis에서 refreshToken 삭제, 블랙리스트에 accessToken 등록
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) {
         String accessToken = jwtService.extractAccessToken(request).orElseThrow();
         String email = jwtService.extractEmail(accessToken).orElseThrow();
-        Long expiration = jwtService.extractExpiration(accessToken);
+        Long expiration = jwtService.extractSecondsExpiration(accessToken);
 
         logout(email, accessToken, expiration);
     }

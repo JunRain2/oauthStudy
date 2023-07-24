@@ -22,7 +22,6 @@ public class RefreshToken {
     public void setRefreshTokenAndTimeToLive(String refreshToken, Long Expiration) {
         this.refreshToken = refreshToken;
         this.refreshTokenExpirationPeriod = Expiration;
-
     }
 
     public RefreshToken(String email) {

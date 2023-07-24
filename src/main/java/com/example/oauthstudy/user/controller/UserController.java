@@ -1,6 +1,8 @@
 package com.example.oauthstudy.user.controller;
 
+import com.example.oauthstudy.global.anotation.LoginUser;
 import com.example.oauthstudy.global.jwt.service.JwtService;
+import com.example.oauthstudy.user.domain.entity.User;
 import com.example.oauthstudy.user.dto.Oauth2UserDto;
 import com.example.oauthstudy.user.dto.UserSignUpDto;
 import com.example.oauthstudy.user.service.UserService;
@@ -46,5 +48,11 @@ public class UserController {
     @GetMapping("/jwt-test")
     public ResponseEntity<HttpStatus> jwtTest() {
         return RESPONSE_OK;
+    }
+
+    @GetMapping("/member-test")
+    public ResponseEntity<User> memberTest(@LoginUser User user) {
+
+        return ResponseEntity.ok(user);
     }
 }

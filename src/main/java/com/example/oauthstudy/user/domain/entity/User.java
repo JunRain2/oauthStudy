@@ -23,7 +23,7 @@ public class User extends BaseTimeEntity {
     private String password;
     private String nickname;
     private String imageUrl;
-    private int age;
+    private Integer age;
     private String city;
 
     @Enumerated(EnumType.STRING)
@@ -45,7 +45,7 @@ public class User extends BaseTimeEntity {
 
     @Builder
     public User(String email, String password, String nickname,
-                String imageUrl, int age, String city, Role role, SocialType socialType, String socialId) {
+                String imageUrl, Integer age, String city, Role role, SocialType socialType, String socialId) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;

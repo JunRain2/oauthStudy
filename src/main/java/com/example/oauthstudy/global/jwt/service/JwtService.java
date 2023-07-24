@@ -114,7 +114,7 @@ public class JwtService {
         }
     }
 
-    public Long extractExpiration(String token) {
+    public Long extractSecondsExpiration(String token) {
         try {
             Long time = JWT.require(Algorithm.HMAC512(secretKey))
                     .build()
@@ -131,7 +131,6 @@ public class JwtService {
     }
 
     // 회원가입시 RefreshToken이 null로 저장되기 때문에, 로그인 시 RefreshToken을 발급하면서 발급한 RefreshToken을 DB에 저장하는 메소드
-    // 추후 Redis에 저장하도록 변경
     public void updateRefreshToken(String email, String refreshToken) {
         RefreshToken token = refreshTokenRepository.findById(email)
                 .orElse(new RefreshToken(email));
@@ -142,7 +141,7 @@ public class JwtService {
         refreshTokenRepository.save(token);
     }
 
-    public boolean isRefrehTokenValid(String token) {
+    public boolean isRefreshTokenValid(String token) {
         try {
             JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
             return true;
@@ -155,7 +154,10 @@ public class JwtService {
     public boolean isAccessTokenValid(String token) {
         try {
             JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
-            return !blackListRepository.existsById(token);
+            if (blackListRepository.existsById(token)) {
+                return false;
+            }
+            return true;
         } catch (Exception e) {
             log.error("유효하지 않은 토큰입니다. {}", e.getMessage());
             return false;
