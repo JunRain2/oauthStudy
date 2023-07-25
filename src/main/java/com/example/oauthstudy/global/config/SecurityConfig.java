@@ -1,6 +1,5 @@
 package com.example.oauthstudy.global.config;
 
-import com.example.oauthstudy.global.blacklist.BlackListRepository;
 import com.example.oauthstudy.global.jwt.filter.JwtAuthenticationProcessingFilter;
 import com.example.oauthstudy.global.jwt.service.JwtService;
 import com.example.oauthstudy.global.login.filter.CustomJsonUsernamePasswordAuthenticationFilter;
@@ -40,7 +39,6 @@ public class SecurityConfig {
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final BlackListRepository blackListRepository;
     private final ObjectMapper objectMapper;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
@@ -146,7 +144,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
-        return new JwtAuthenticationProcessingFilter(jwtService, userRepository, refreshTokenRepository, blackListRepository);
+        return new JwtAuthenticationProcessingFilter(jwtService, userRepository, refreshTokenRepository);
     }
 
 }

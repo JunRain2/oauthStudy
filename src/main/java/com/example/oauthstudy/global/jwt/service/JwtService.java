@@ -2,7 +2,6 @@ package com.example.oauthstudy.global.jwt.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.example.oauthstudy.global.blacklist.BlackListRepository;
 import com.example.oauthstudy.global.refreshtoken.RefreshToken;
 import com.example.oauthstudy.global.refreshtoken.RefreshTokenRepository;
 import com.example.oauthstudy.user.domain.repository.UserRepository;
@@ -31,7 +30,6 @@ public class JwtService {
 
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final BlackListRepository blackListRepository;
 
     @Value("${jwt.secretKey}")
     private String secretKey;
@@ -114,22 +112,6 @@ public class JwtService {
         }
     }
 
-    public Long extractSecondsExpiration(String token) {
-        try {
-            Long time = JWT.require(Algorithm.HMAC512(secretKey))
-                    .build()
-                    .verify(token) // 유효기간이 유효하지 않으면 예외 발생
-                    .getExpiresAt()
-                    .getTime();
-            Date now = new Date();
-
-            return (time - now.getTime())/1000;
-        } catch (Exception e) {
-            log.error("액세스 토큰이 유효하지 않습니다");
-            return 0L;
-        }
-    }
-
     // 회원가입시 RefreshToken이 null로 저장되기 때문에, 로그인 시 RefreshToken을 발급하면서 발급한 RefreshToken을 DB에 저장하는 메소드
     public void updateRefreshToken(String email, String refreshToken) {
         RefreshToken token = refreshTokenRepository.findById(email)
@@ -141,22 +123,9 @@ public class JwtService {
         refreshTokenRepository.save(token);
     }
 
-    public boolean isRefreshTokenValid(String token) {
+    public boolean isTokenValid(String token) {
         try {
             JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
-            return true;
-        } catch (Exception e) {
-            log.error("유효하지 않은 토큰입니다. {}", e.getMessage());
-            return false;
-        }
-    }
-
-    public boolean isAccessTokenValid(String token) {
-        try {
-            JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
-            if (blackListRepository.existsById(token)) {
-                return false;
-            }
             return true;
         } catch (Exception e) {
             log.error("유효하지 않은 토큰입니다. {}", e.getMessage());

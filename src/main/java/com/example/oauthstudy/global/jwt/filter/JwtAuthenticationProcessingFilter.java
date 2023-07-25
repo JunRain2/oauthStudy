@@ -1,6 +1,5 @@
 package com.example.oauthstudy.global.jwt.filter;
 
-import com.example.oauthstudy.global.blacklist.BlackListRepository;
 import com.example.oauthstudy.global.exception.InvalidAccessTokenException;
 import com.example.oauthstudy.global.jwt.service.JwtService;
 import com.example.oauthstudy.global.jwt.util.PasswordUtil;
@@ -41,7 +40,6 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final BlackListRepository blackListRepository;
 
     private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
 
@@ -57,7 +55,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
         // 요청 헤더에서 RefreshToken 추출 -> RefreshToken이 없거나 유효하지 않다면(DB에 저장된 RefreshToken과 다르다면) null을 반환
         // 사용자의 요청 헤더에 RefreshToken이 있는 경우는, AccessToken이 만료되어 요청하는 경우 -> 이외의 상황은 모두 null
         String refreshToken = jwtService.extractRefreshToken(request)
-                .filter(jwtService::isRefreshTokenValid)
+                .filter(jwtService::isTokenValid)
                 .orElse(null);
 
         // Refresh Token이 존재하다면, DB의 Refresh Token과 일치하는지 판단 후, 일치하면 AccessToken을 재발급
@@ -79,7 +77,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
                                                    FilterChain filterChain) throws ServletException, IOException {
         log.info("checkAccessTokenAndAuthentication() 호출");
         jwtService.extractAccessToken(request)
-                .filter(jwtService::isAccessTokenValid)
+                .filter(jwtService::isTokenValid)
                 .ifPresent(accessToken -> jwtService.extractEmail(accessToken) // 이메일 추출
                         .ifPresent(email -> userRepository.findByEmail(email) // 이메일로 user 찾기
                                 .ifPresent(this::saveAuthentication))); // 해당 유저를 인증 처리

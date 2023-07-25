@@ -23,7 +23,6 @@ implements LogoutSuccessHandler {
 
     private final JwtService jwtService;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final BlackListRepository blackListRepository;
 
     // 로그아웃 성공시 이메일에 해당하는 redis에서 refreshToken 삭제, 블랙리스트에 accessToken 등록
     @Override
@@ -31,20 +30,13 @@ implements LogoutSuccessHandler {
                                         Authentication authentication) {
         String accessToken = jwtService.extractAccessToken(request).orElseThrow();
         String email = jwtService.extractEmail(accessToken).orElseThrow();
-        Long expiration = jwtService.extractSecondsExpiration(accessToken);
 
-        logout(email, accessToken, expiration);
+        logout(email, accessToken);
     }
 
-    public void logout(String email, String accessToken, Long expiration) {
-
+    public void logout(String email, String accessToken) {
         RefreshToken refreshToken = refreshTokenRepository.findById(email).orElseThrow();
         refreshTokenRepository.delete(refreshToken);
-
-        BlackList blackList = new BlackList(accessToken);
-        blackList.setExpiration(expiration);
-
-        blackListRepository.save(blackList);
         log.info("로그아웃 성공");
 
     }
