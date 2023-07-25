@@ -1,7 +1,5 @@
 package com.example.oauthstudy.global.logout.handler;
 
-import com.example.oauthstudy.global.blacklist.BlackList;
-import com.example.oauthstudy.global.blacklist.BlackListRepository;
 import com.example.oauthstudy.global.jwt.service.JwtService;
 import com.example.oauthstudy.global.refreshtoken.RefreshToken;
 import com.example.oauthstudy.global.refreshtoken.RefreshTokenRepository;
@@ -19,15 +17,15 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 @Slf4j
 public class SimpleUrlLogoutSuccessHandler extends AbstractAuthenticationTargetUrlRequestHandler
-implements LogoutSuccessHandler {
+        implements LogoutSuccessHandler {
 
     private final JwtService jwtService;
     private final RefreshTokenRepository refreshTokenRepository;
 
-    // 로그아웃 성공시 이메일에 해당하는 redis에서 refreshToken 삭제, 블랙리스트에 accessToken 등록
+    // 로그아웃 성공시 이메일에 해당하는 redis에서 refreshToken 삭제
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) {
+                                Authentication authentication) {
         String accessToken = jwtService.extractAccessToken(request).orElseThrow();
         String email = jwtService.extractEmail(accessToken).orElseThrow();
 

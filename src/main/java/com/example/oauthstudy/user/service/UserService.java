@@ -1,10 +1,6 @@
 package com.example.oauthstudy.user.service;
 
-import com.example.oauthstudy.global.blacklist.BlackList;
-import com.example.oauthstudy.global.blacklist.BlackListRepository;
 import com.example.oauthstudy.global.jwt.service.JwtService;
-import com.example.oauthstudy.global.refreshtoken.RefreshToken;
-import com.example.oauthstudy.global.refreshtoken.RefreshTokenRepository;
 import com.example.oauthstudy.user.domain.entity.User;
 import com.example.oauthstudy.user.domain.repository.UserRepository;
 import com.example.oauthstudy.user.dto.Oauth2UserDto;
@@ -29,7 +25,7 @@ public class UserService {
     private final JwtService jwtService;
     private final HttpServletRequest request;
 
-    public boolean signUp(UserSignUpDto userSignUpDto){
+    public boolean signUp(UserSignUpDto userSignUpDto) {
 
         if (userRepository.existsByEmail(userSignUpDto.getEmail())
                 || userRepository.existsByNickname(userSignUpDto.getNickName())) {

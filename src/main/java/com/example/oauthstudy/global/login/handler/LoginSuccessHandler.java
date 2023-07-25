@@ -20,11 +20,13 @@ import javax.servlet.http.HttpServletResponse;
 public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtService jwtService;
-    private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Value("${jwt.access.expiration}")
     private String accessTokenExpiration;
+
+    @Value("${jwt.refresh.expiration}")
+    private Long refreshTokenExpiration;
 
     // JSON 로그인 필터를 정상적으로 통과해서 인증처리가 됐기 때문에, AccessToken과 RefreshToken을 발급
     @Override
@@ -39,8 +41,10 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         // 회원가입시 RefreshToken이 null이기 때문에 로그인 성공 시 redis에 따로 저장
         RefreshToken token = refreshTokenRepository.findById(email)
                 .orElse(new RefreshToken(email));
+
         token.setRefreshTokenAndTimeToLive(refreshToken,
-                jwtService.getRefreshTokenExpirationPeriod()/1000);
+                refreshTokenExpiration/1000);
+
         refreshTokenRepository.save(token);
 
         log.info("로그인에 성공하였습니다. 이메일 : {}", email);

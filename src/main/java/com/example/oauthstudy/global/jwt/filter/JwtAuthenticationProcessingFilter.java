@@ -1,6 +1,5 @@
 package com.example.oauthstudy.global.jwt.filter;
 
-import com.example.oauthstudy.global.exception.InvalidAccessTokenException;
 import com.example.oauthstudy.global.jwt.service.JwtService;
 import com.example.oauthstudy.global.jwt.util.PasswordUtil;
 import com.example.oauthstudy.global.refreshtoken.RefreshToken;
@@ -60,8 +59,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
         // Refresh Token이 존재하다면, DB의 Refresh Token과 일치하는지 판단 후, 일치하면 AccessToken을 재발급
         if (refreshToken != null) {
-            String email = jwtService.extractEmail(refreshToken).orElseThrow(InvalidAccessTokenException::new);
-            checkRefreshTokenAndReIssueAccessToken(response, email);
+            checkRefreshTokenAndReIssueAccessToken(response, refreshToken);
             return; // RefreshToken을 보낸 경우 AccessToken을 재발급 하고 인증 처리는 하지 않게 하기위해 바로 return으로 필터 진행 막기
         }
 
@@ -116,19 +114,22 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     }
 
     // Refresh Token을 통해 DB에서 유저를 찾고, Access Token을 재발급
-    public void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String email) {
-        RefreshToken token = refreshTokenRepository.findById(email).orElseThrow();
-        String reIssuedRefreshToken = reIssueRefreshToken(token, email);
-        jwtService.sendAccessAndRefreshToken(response, jwtService.createAccessToken(token.getEmail()
-        ), reIssuedRefreshToken);
+    public void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String refreshToken) {
+        refreshTokenRepository.findByRefreshToken(refreshToken)
+                .ifPresentOrElse(token -> {
+                    String reIssueRefreshToken = reIssueRefreshToken(token);
+                    jwtService.sendAccessAndRefreshToken(response, jwtService.createAccessToken(token.getEmail()),
+                            reIssueRefreshToken);
+                }, () -> {
+                    throw new RuntimeException("Refresh token not found");
+                });
     }
 
-    // Refresh Token 재발급 & Redis에 Refresh Token 업데이트
-    private String reIssueRefreshToken(RefreshToken refreshToken, String email) {
-        String reIssuedRefreshToken = jwtService.createRefreshToken(email);
-        refreshToken.setRefreshTokenAndTimeToLive(reIssuedRefreshToken,
-                jwtService.getRefreshTokenExpirationPeriod()/1000);
+    private String reIssueRefreshToken(RefreshToken refreshToken) {
+        String reIssuedRefreshToken = jwtService.createRefreshToken(refreshToken.getEmail());
+        refreshToken.setRefreshTokenAndTimeToLive(reIssuedRefreshToken, jwtService.getRefreshTokenExpirationPeriod());
         refreshTokenRepository.save(refreshToken);
         return reIssuedRefreshToken;
     }
+
 }
